@@ -8,7 +8,9 @@ import (
 	"log"
 	"net/http"
 
+	"./utils"
 	"github.com/bradleyfalzon/ghinstallation"
+	"github.com/gin-gonic/gin"
 	"github.com/google/go-github/v38/github"
 	"golang.org/x/oauth2"
 )
@@ -26,6 +28,18 @@ var (
 )
 
 func main() {
+	r := gin.New()
+	v1 := r.Group("/api/v1")
+	{
+		v1.POST("/github/payload", utils.ConsumeEvent)
+		//v1.GET("/github/pullrequests/:owner/:repo", apis.GetPullRequests)
+		//v1.GET("/github/pullrequests/:owner/:repo/:page", apis.GetPullRequestsPaginated)
+	}
+	utils.InitGitHubClient()
+	r.Run(fmt.Sprintf(":%v", 8080))
+}
+
+func readContent(fileRoute string) string {
 	// Load the private key
 	keyBytes, err := ioutil.ReadFile(privateKeyFile)
 	if err != nil {
@@ -56,7 +70,7 @@ func main() {
 	client = github.NewClient(tc)
 
 	// Get the contents of a file in the repository
-	fileContent, _, _, err := client.Repositories.GetContents(context.Background(), repoOwner, repoName, "main.py", nil)
+	fileContent, _, _, err := client.Repositories.GetContents(context.Background(), repoOwner, repoName, fileRoute, nil)
 	if err != nil {
 		log.Fatalf("Failed to get file contents: %v", err)
 	}
@@ -66,5 +80,5 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to parse private key: %v", err)
 	}
-	fmt.Printf("File contents: %s\n", content)
+	return content
 }
