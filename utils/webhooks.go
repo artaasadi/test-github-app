@@ -8,72 +8,9 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"time"
 
 	"github.com/gin-gonic/gin"
 )
-
-type Event string
-
-type EventPayload struct {
-	Ref        string `json:"ref"`
-	Before     string `json:"before"`
-	After      string `json:"after"`
-	Repository struct {
-		ID       int    `json:"id"`
-		Name     string `json:"name"`
-		FullName string `json:"full_name"`
-		Private  bool   `json:"private"`
-		Owner    struct {
-			Name  string `json:"name"`
-			Email string `json:"email"`
-			Login string `json:"login"`
-			ID    int    `json:"id"`
-		} `json:"owner"`
-	} `json:"repository"`
-	Pusher struct {
-		Name  string `json:"name"`
-		Email string `json:"email"`
-	} `json:"pusher"`
-	Commits []struct {
-		ID        string    `json:"id"`
-		TreeID    string    `json:"tree_id"`
-		Message   string    `json:"message"`
-		Timestamp time.Time `json:"timestamp"`
-		Author    struct {
-			Name     string `json:"name"`
-			Email    string `json:"email"`
-			Username string `json:"username"`
-		} `json:"author"`
-		Committer struct {
-			Name     string `json:"name"`
-			Email    string `json:"email"`
-			Username string `json:"username"`
-		} `json:"committer"`
-		Added    []string      `json:"added"`
-		Removed  []interface{} `json:"removed"`
-		Modified []string      `json:"modified"`
-	} `json:"commits"`
-	HeadCommit struct {
-		ID        string    `json:"id"`
-		TreeID    string    `json:"tree_id"`
-		Message   string    `json:"message"`
-		Timestamp time.Time `json:"timestamp"`
-		Author    struct {
-			Name     string `json:"name"`
-			Email    string `json:"email"`
-			Username string `json:"username"`
-		} `json:"author"`
-		Committer struct {
-			Name     string `json:"name"`
-			Email    string `json:"email"`
-			Username string `json:"username"`
-		} `json:"committer"`
-		Added    []string      `json:"added"`
-		Removed  []interface{} `json:"removed"`
-		Modified []string      `json:"modified"`
-	} `json:"head_commit"`
-}
 
 const (
 	Install     Event = "installation"
@@ -122,7 +59,6 @@ func ConsumeEvent(c *gin.Context) {
 			json.Unmarshal(payload, &p)
 			if err := Consumers[string(e)](p); err != nil {
 				log.Printf("couldn't consume event %s, error: %+v", string(e), err)
-				// We're responding to GitHub API, we really just want to say "OK" or "not OK"
 				c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"reason": err})
 			}
 			log.Printf("consumed event: %s", e)
@@ -135,22 +71,14 @@ func ConsumeEvent(c *gin.Context) {
 }
 
 func consumeInstallEvent(payload EventPayload) error {
-	// Process event ...
-	// Insert data into database ...
 	return nil
 }
 
 func consumePingEvent(payload EventPayload) error {
-	// Process event ...
-	// Insert data into database ...
 	return nil
 }
 
 func consumePushEvent(payload EventPayload) error {
-
-	// Process event ...
-	// Insert data into database ...
-
 	log.Printf("Received push from %s, by user %s, on branch %s",
 		payload.Repository.FullName,
 		payload.Pusher.Name,
@@ -167,7 +95,5 @@ func consumePushEvent(payload EventPayload) error {
 }
 
 func consumePullRequestEvent(payload EventPayload) error {
-	// Process event ...
-	// Insert data into database ...
 	return nil
 }

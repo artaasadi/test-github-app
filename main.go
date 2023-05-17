@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"crypto/rsa"
-	"fmt"
 	"log"
 
 	"github.com/artaasadi/test-github-app/utils"
@@ -30,8 +29,6 @@ func main() {
 		//v1.GET("/github/pullrequests/:owner/:repo/:page", apis.GetPullRequestsPaginated)
 	}
 	client = utils.InitGitHubClient()
-	content := readContent("main.py")
-	fmt.Println(content)
 	//r.Run(fmt.Sprintf(":%v", 8080))
 }
 
