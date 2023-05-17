@@ -1,4 +1,4 @@
-module test-github-app
+module github.com/artaasadi/test-github-app
 
 go 1.20
 

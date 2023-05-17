@@ -8,7 +8,7 @@ import (
 	"log"
 	"net/http"
 
-	"./utils"
+	"github.com/artaasadi/test-github-app/utils"
 	"github.com/bradleyfalzon/ghinstallation"
 	"github.com/gin-gonic/gin"
 	"github.com/google/go-github/v38/github"
