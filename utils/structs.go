@@ -63,3 +63,11 @@ type EventPayload struct {
 		Modified []string      `json:"modified"`
 	} `json:"head_commit"`
 }
+
+type Config struct {
+	AppID          int    `yaml:"app_id" envconfig:"APP_ID"`
+	InstallationID int    `yaml:"installation_id" envconfig:"INSTALLATION_ID"`
+	PrivateKeyFile string `yaml:"private_key_file" envconfig:"PRIVATE_KEY_FILE"`
+	RepoOwner      string `yaml:"repo_owner" envconfig:"REPO_OWNER"`
+	RepoName       string `yaml:"repo_name" envconfig:"REPO_NAME"`
+}

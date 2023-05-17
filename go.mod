@@ -6,7 +6,9 @@ require (
 	github.com/bradleyfalzon/ghinstallation v1.1.1
 	github.com/gin-gonic/gin v1.9.0
 	github.com/google/go-github/v38 v38.1.0
+	github.com/kelseyhightower/envconfig v1.4.0
 	golang.org/x/oauth2 v0.8.0
+	gopkg.in/yaml.v2 v2.4.0
 )
 
 require (

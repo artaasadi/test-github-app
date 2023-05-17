@@ -11,28 +11,22 @@ import (
 	"golang.org/x/oauth2"
 )
 
-const (
-	appID          = 334984
-	installation   = 37605233
-	privateKeyFile = "arta-test-github-app.2023-05-17.private-key.pem"
-)
-
-func InitGitHubClient() *github.Client {
+func InitGitHubClient(cfg Config) *github.Client {
 	// Load the private key
-	keyBytes, err := ioutil.ReadFile(privateKeyFile)
+	keyBytes, err := ioutil.ReadFile(cfg.PrivateKeyFile)
 	if err != nil {
 		log.Fatalf("Failed to read private key: %v", err)
 	}
 
 	// Create a GitHub client using the app's private key
-	tr, err := ghinstallation.NewAppsTransport(http.DefaultTransport, appID, keyBytes)
+	tr, err := ghinstallation.NewAppsTransport(http.DefaultTransport, int64(cfg.AppID), keyBytes)
 	if err != nil {
 		log.Fatalf("Failed to parse private key: %v", err)
 	}
 	client := github.NewClient(&http.Client{Transport: tr})
 
 	// Get the installation token for the repository
-	token, _, err := client.Apps.CreateInstallationToken(context.Background(), installation, nil)
+	token, _, err := client.Apps.CreateInstallationToken(context.Background(), int64(cfg.InstallationID), nil)
 	if err != nil {
 		log.Fatalf("Failed to create installation token: %v", err)
 	}

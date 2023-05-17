@@ -1,2 +1,5 @@
 credentials.txt
+
+# ignore credentials and config files
 *.pem
+config.yaml

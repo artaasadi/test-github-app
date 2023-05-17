@@ -1,23 +1,22 @@
 package main
 
 import (
-	"context"
-	"crypto/rsa"
-	"log"
+	"fmt"
+	"os"
 
 	"github.com/artaasadi/test-github-app/utils"
 	"github.com/gin-gonic/gin"
 	"github.com/google/go-github/v38/github"
+	"github.com/kelseyhightower/envconfig"
+	"gopkg.in/yaml.v2"
 )
 
 var (
-	privateKey *rsa.PrivateKey
-	client     *github.Client
+	client *github.Client
 )
 
 const (
-	repoOwner = "artaasadi"
-	repoName  = "trader-bot"
+	filepath = "config.yaml"
 )
 
 func main() {
@@ -28,21 +27,33 @@ func main() {
 		//v1.GET("/github/pullrequests/:owner/:repo", apis.GetPullRequests)
 		//v1.GET("/github/pullrequests/:owner/:repo/:page", apis.GetPullRequestsPaginated)
 	}
-	client = utils.InitGitHubClient()
-	//r.Run(fmt.Sprintf(":%v", 8080))
+	var cfg utils.Config
+	err := readFile(&cfg, filepath)
+	if err != nil {
+		readEnv(&cfg)
+	}
+	client = utils.InitGitHubClient(cfg)
+	r.Run(fmt.Sprintf(":%v", 8000))
 }
 
-func readContent(fileRoute string) string {
-	// Get the contents of a file in the repository
-	fileContent, _, _, err := client.Repositories.GetContents(context.Background(), repoOwner, repoName, fileRoute, nil)
+func readFile(cfg *utils.Config, filepath string) error {
+	f, err := os.Open(filepath)
 	if err != nil {
-		log.Fatalf("Failed to get file contents: %v", err)
+		return err
 	}
+	defer f.Close()
 
-	// Print the contents of the file
-	content, err := fileContent.GetContent()
+	decoder := yaml.NewDecoder(f)
+	err = decoder.Decode(cfg)
 	if err != nil {
-		log.Fatalf("Failed to parse private key: %v", err)
+		return err
 	}
-	return content
+	return nil
+}
+
+func readEnv(cfg *utils.Config) {
+	err := envconfig.Process("", cfg)
+	if err != nil {
+		panic(err)
+	}
 }
